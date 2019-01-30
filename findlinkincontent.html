@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<title>Web Page Design</title>
+<head>
+<script>
+function urlify(text) {
+    var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+    
+       text.replace(urlRegex, function(url,b,c) {
+         if(url!='')
+         {
+             alert("please  enter text with out link");
+         }
+        
+        
+    }) 
+   
+}
+
+var text = "Find me at  and also at  ";
+var html = urlify(text);
+
+</script>
+</head>
+<body>
+</body>
+</html>
