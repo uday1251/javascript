@@ -1,0 +1,2 @@
+ <script>(function(a,b,c,d){window.fetch("jsonurl").then(e=>e.json()).then(f=>{c=a.createElement(b);c.type="application/ld+json";c.text=JSON.stringify(f);d=a.getElementsByTagName(b)[0];d.parentNode.insertBefore(c,d);});})(document,"script");
+</script>
