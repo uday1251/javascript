@@ -1,0 +1,157 @@
+  <input type="file" class="fileInput" name ="pan_document"  data-id="0">
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<div id="previewContainer" style="display:none;">
+    <div class="modal modal-full" id="filePreviewModal">
+        <div class="modal-dialog">
+            <div class="modal-content preview-model-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">File Preview </h4>
+                    <button type="button" class="close btn-close-model close-btn-2" >&times;</button>
+                </div>
+                <div class="modal-body model-prv-body" id="previewContent"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="approveBtn">Approve</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetFileInput()">Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<style>
+    .modal-lg {
+        max-width: 90%;
+    }
+    .modal-full {
+        min-width: 100%;
+        margin: 0;
+    }
+    .modal-full .modal-content {
+        min-height: 100vh;
+    }
+    .modal-dialog {
+        max-width: 910px !important;
+    }
+    .close-btn-2{
+        background: #FFF;
+        border-radius: 50%;
+        color: #ff0000;
+        border: 2px solid #ff0000;
+        width: 24px;
+        height: 24px;
+        line-height: 20px;
+    }
+    .model-prv-body
+    {
+        text-align:center;
+        height: 450px;
+        overflow: auto;
+    }
+    #filePreviewModal
+    {
+        overflow: hidden;
+    }
+    .preview-model-content
+    {
+        margin-left:-9px;
+    }
+    .preview-model-content .modal-body
+    {
+        flex: none !important;
+    }
+</style>
+
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+<script>
+    var $ = jQuery.noConflict();
+    $(document).ready(function() {
+        $('.fileInput').change(function() {
+            var file = $(this)[0].files[0];
+
+            if (file) {
+                $('#previewContainer').show();
+                $('#filePreviewModal').modal('show');
+
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    if (file.type === 'application/pdf') {
+                        renderPdfPreview(e.target.result);
+                    } else if (file.type.startsWith('image/')) {
+                        $('#previewContent').html('<img src="' + e.target.result + '" class="img-fluid" />');
+                    } else {
+                        $('#previewContent').html('<p>Preview not available for this file type.</p>');
+                    }
+                };
+                reader.readAsDataURL(file);
+                $('#filePreviewModal').css('margin-top', '-10px');
+            } else {
+                $('#previewContainer').hide();
+            }
+        });
+
+        $('#approveBtn').click(function() {
+         //console.log($(this).closest('.modal').find('.fileInput'));
+
+         var fileInput =  $('.modal-content').find('.fileInput').filter(function() {
+            return this.files.length > 0;
+        });
+       
+      if (fileInput.length > 0) {
+            // Retrieve the data-id from the file input element
+            var fileInputId = fileInput.data('id');
+            console.log('File input data-id:', fileInputId);
+
+            var file = fileInput[0].files[0];
+            console.log('File selected:', file);
+
+            // Rest of the code for file handling
+            //uploadFile(file,fileInputId); // Trigger file upload
+            $('#filePreviewModal').modal('hide');
+        } else {
+            console.error('No file selected');
+            alert("No file selected");
+        }
+    });
+
+
+        $(".btn-close-model").click(function(){
+            $('.fileInput').val('');
+            $('#previewContainer').hide();
+        });
+    });
+
+    function renderPdfPreview(data) {
+        var loadingTask = pdfjsLib.getDocument({ data: atob(data.split(',')[1]) });
+        loadingTask.promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+                var scale = 1.5;
+                var viewport = page.getViewport({ scale: scale });
+
+                var canvas = document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                canvas.style.width = '100%';
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext).promise.then(function() {
+                    $('#previewContent').html(canvas);
+                });
+            });
+        });
+    }
+
+    function resetFileInput() {
+        $('.fileInput').val('');
+        $('#previewContainer').hide();
+    }
+
+   
+</script>
